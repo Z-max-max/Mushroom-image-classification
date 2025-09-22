@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ระบบจำแนกเห็ด</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #d4fc79, #96e6a1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            padding: 30px;
+            text-align: center;
+            width: 450px;
+            max-width: 90%;
+        }
+        h1 {
+            color: #2c7a7b;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin: 15px 0;
+        }
+        button {
+            background: #2c7a7b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #205d5f;
+        }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f0fdf4;
+            text-align: left;
+        }
+        .result h2 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        img {
+            margin-top: 15px;
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .error {
+            margin-top: 12px;
+            color: #b00020;
+            background: #ffebee;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ระบบจำแนกเห็ด</h1>
+
+        <!-- send to /predict explicitly -->
+        <form action="{{ url_for('predict') }}" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <br>
+            <button type="submit">ตรวจสอบ</button>
+        </form>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if prediction %}
+        <div class="result">
+            <h2>ผลการตรวจสอบ</h2>
+            <p><b>ชื่อเห็ด:</b> {{ prediction.name }}</p>
+            <p><b>รหัสคลาส:</b> {{ prediction.class_id }}</p>
+            <p><b>ความมั่นใจ:</b> {{ '%.2f' % (prediction.confidence * 100) }}%</p>
+            <p><b>รายละเอียด:</b> {{ prediction.description }}</p>
+            {% if image_file %}
+                <img src="{{ image_file }}" alt="Uploaded Image">
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
